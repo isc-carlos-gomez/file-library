@@ -1,0 +1,9 @@
+@startuml
+
+hide empty description
+
+[*] --> FoundFile : Add directory
+FoundFile --> File : Scan files
+
+
+@enduml

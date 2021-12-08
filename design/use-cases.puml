@@ -1,0 +1,42 @@
+@startuml
+
+actor User
+
+usecase OpenApp as "
+**Open Application**
+Offers to scan files when
+attributes are missing
+"
+
+usecase AddDirectory as "
+**Add Directory**
+Collect file paths
+"
+
+usecase ScanFiles as "
+**Scan Files**
+Collect missing file attributes
+"
+
+usecase FindDuplicates as "
+**Find Duplicates by Hash**
+1. Collect file hashes
+2. Group files by hash
+"
+
+usecase OrderFiles
+usecase FilterFiles
+usecase SelectFile
+
+User -> OpenApp
+User -> AddDirectory
+User -> ScanFiles
+User -> FindDuplicates
+User -> OrderFiles
+User -> FilterFiles
+User -> SelectFile
+
+AddDirectory ..> ScanFiles : <<includes>>
+ScanFiles ..> OpenApp : <<extends>>
+
+@enduml

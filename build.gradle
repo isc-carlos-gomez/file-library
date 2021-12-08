@@ -1,0 +1,86 @@
+plugins {
+  id 'org.springframework.boot' version '2.5.7'
+  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+  id 'application'
+  id 'org.openjfx.javafxplugin' version '0.0.10'
+  id 'nu.studer.jooq' version '6.0.1'
+}
+
+group = 'com.krloxz.forganizer'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+  mavenCentral()
+}
+
+ext['jooq.version'] = jooq.version.get()
+dependencies {
+  implementation 'org.springframework.boot:spring-boot-starter'
+  //annotationProcessor 'org.springframework.boot:spring-configuration-processor'
+  implementation 'org.controlsfx:controlsfx:11.1.0'
+  implementation 'com.google.guava:guava:31.0.1-jre'
+  implementation 'io.projectreactor:reactor-core'
+
+  // Data access
+  implementation 'org.springframework.boot:spring-boot-starter-jooq'
+  implementation 'org.flywaydb:flyway-core'
+  implementation 'com.h2database:h2'
+  jooqGenerator 'org.jooq:jooq-meta-extensions'
+
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+javafx {
+  version = "17"
+  modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.graphics' ]
+}
+
+jooq {
+  configurations {
+    main {
+      generationTool {
+        logging = org.jooq.meta.jaxb.Logging.WARN
+        jdbc = null
+        generator {
+          name = 'org.jooq.codegen.DefaultGenerator'
+          database {
+            name = 'org.jooq.meta.extensions.ddl.DDLDatabase'
+            properties {
+              property {
+                key = 'scripts'
+                value = "${projectDir}/src/*/resources/db/migration/*sql"
+              }
+              property {
+                key = 'sort'
+                value = 'flyway'
+              }
+              property {
+                key = 'unqualifiedSchema'
+                value = 'none'
+              }
+              property {
+                key = 'defaultNameCase'
+                value = 'lower'
+              }
+            }
+          }
+          generate {
+            relations = true
+            records = true
+            immutablePojos = true
+            fluentSetters = true
+          }
+          target {
+            packageName = 'com.krloxz.forganaizer.infra.jooq'
+            directory = 'build/generated/sources/jooq'
+          }
+        }
+      }
+    }
+  }
+}
+
+test {
+  useJUnitPlatform()
+}
