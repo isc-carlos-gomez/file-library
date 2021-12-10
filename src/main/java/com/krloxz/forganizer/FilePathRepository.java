@@ -16,20 +16,20 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
-public class FileRepository {
+public class FilePathRepository {
 
   private final DSLContext create;
 
-  public FileRepository(final DSLContext create) {
+  public FilePathRepository(final DSLContext create) {
     this.create = create;
   }
 
   @Async
-  CompletableFuture<Void> saveAll(final List<File> batch) {
+  CompletableFuture<Void> saveAll(final List<FilePath> batch) {
     final var fileRecords = batch.stream()
-        .map(file -> {
-          return new FilesRecord()
-              .setPath(file.path().toString());
+        .map(path -> {
+          return new FilePathsRecord()
+              .setPath(path..path().toString());
         })
         .toList();
     this.create.batchInsert(fileRecords).execute();
@@ -48,8 +48,8 @@ public class FileRepository {
             .map(File::new));
   }
 
-  Mono<Integer> countAllWithNoAttributes() {
-    return Mono.fromCallable(()->this.create.selectCount().from(FILES).where(FILES.pa));
-  }
+  // Mono<Integer> countAllWithNoAttributes() {
+  //   return Mono.fromCallable(() -> this.create.selectCount().from(FILES).where(FILES.pa));
+  // }
 
 }

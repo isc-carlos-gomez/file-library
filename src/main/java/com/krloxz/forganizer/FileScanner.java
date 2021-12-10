@@ -13,10 +13,10 @@ import reactor.core.scheduler.Schedulers;
 @Component
 public class FileScanner {
 
-  private final FileRepository repository;
+  private final FilePathRepository repository;
   private final AttributeReader attributeReader;
 
-  public FileScanner(final FileRepository repository, final AttributeReader attributeReader) {
+  public FileScanner(final FilePathRepository repository, final AttributeReader attributeReader) {
     this.repository = repository;
     this.attributeReader = attributeReader;
   }

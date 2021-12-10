@@ -128,6 +128,7 @@ public class FileExplorerController {
             directoryAdder.add(selectedDirectory);
             updateMessage("Files added successfully");
             Thread.sleep(500);
+            /*
             updateMessage("Scanning file attributes...");
             // disposable =
             fileScanner.scan()
@@ -137,6 +138,7 @@ public class FileExplorerController {
             // .subscribe(progress -> updateProgress(progress, 1_000));
             // Thread.sleep(30_000);
             updateMessage("Scan is complete");
+            */
             return null;
           }
         };

@@ -10,16 +10,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class DirectoryAdder {
 
-  private final FileRepository repository;
+  private final FilePathRepository repository;
 
-  public DirectoryAdder(final FileRepository repository) {
+  public DirectoryAdder(final FilePathRepository repository) {
     this.repository = repository;
   }
 
   public void add(final Path directory) {
-    try (Stream<Path> paths = pathsOf(directory)) {
+    try (Stream<String> paths = pathsOf(directory)) {
       final AsyncFileAdder fileAdder = new AsyncFileAdder(repository);
-      paths.map(File::new)
+      paths.map(FilePath::new)
           .forEach(fileAdder::add);
       fileAdder.complete();
     } catch (final IOException e) {
@@ -28,8 +28,8 @@ public class DirectoryAdder {
 
   }
 
-  private Stream<Path> pathsOf(final Path directory) throws IOException {
-    return Files.walk(directory);
+  private Stream<String> pathsOf(final Path directory) throws IOException {
+    return Files.walk(directory).map(Path::toString);
   }
 
 }

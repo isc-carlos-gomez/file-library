@@ -17,15 +17,18 @@ public class FileAttributesReader {
   public Mono<FileAttributes> read(final FilePath path) {
     return Mono.fromSupplier(
         () -> {
-          try {
-            final BasicFileAttributes attributes = Files.readAttributes(Paths.get(path.value()), BasicFileAttributes.class);
-            final LocalDateTime lastModifiedTime =
-                LocalDateTime.ofInstant(attributes.lastModifiedTime().toInstant(), ZoneId.systemDefault());
-            return new FileAttributes(file.path().getFileName().toString(), attributes.size(), lastModifiedTime);
+          // try {
+            // final BasicFileAttributes attributes = Files.readAttributes(Paths.get(path.value()),
+            //     BasicFileAttributes.class);
+            // final LocalDateTime lastModifiedTime = LocalDateTime.ofInstant(attributes.lastModifiedTime().toInstant(),
+            //     ZoneId.systemDefault());
+            // return new FileAttributes(file.path().getFileName().toString(),
+            // attributes.size(), lastModifiedTime);
+            return null;
 
-          } catch (final IOException e) {
-            throw new IllegalStateException("Unable to read file attributes of " + file, e);
-          }
+          // } catch (final IOException e) {
+          //   throw new IllegalStateException("Unable to read file attributes of " /* + file */, e);
+          // }
         });
   }
 
