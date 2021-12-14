@@ -15,15 +15,15 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 @Component
-public class PrimaryStageInitializer implements ApplicationListener<JavafxApplication.PrimaryStageReady> {
+public class MainWindowLoader implements ApplicationListener<JavafxApplication.PrimaryStageReady> {
 
   private final String applicationTitle;
   private final Resource fxml;
   private final ApplicationContext applicationContext;
 
-  public PrimaryStageInitializer(
-      @Value("${spring.application.ui.title}") final String applicationTitle,
-      @Value("classpath:/ui/file-explorer.fxml") final Resource fxml,
+  public MainWindowLoader(
+      @Value("${spring.application.name}") final String applicationTitle,
+      @Value("classpath:/ui/main-window.fxml") final Resource fxml,
       final ApplicationContext applicationContext) {
     this.applicationTitle = applicationTitle;
     this.fxml = fxml;
@@ -33,18 +33,17 @@ public class PrimaryStageInitializer implements ApplicationListener<JavafxApplic
   @Override
   public void onApplicationEvent(final JavafxApplication.PrimaryStageReady stageReadyEvent) {
     try {
-      final Stage stage = stageReadyEvent.getStage();
-
       final URL url = this.fxml.getURL();
       final FXMLLoader fxmlLoader = new FXMLLoader(url);
       fxmlLoader.setControllerFactory(this.applicationContext::getBean);
       final Parent root = fxmlLoader.load();
-      final Scene scene = new Scene(root, 600, 600);
+      final Scene scene = new Scene(root);
+
+      final Stage stage = stageReadyEvent.getStage();
       stage.setScene(scene);
       stage.setTitle(this.applicationTitle);
-
+      stage.setMaximized(true);
       stage.show();
-
     } catch (final IOException e) {
       throw new RuntimeException(e);
     }

@@ -288,3 +288,6 @@ gradle-app.setting
 .classpath
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,linux,java,gradle,visualstudiocode,eclipse,intellij
+
+# Database
+*.db

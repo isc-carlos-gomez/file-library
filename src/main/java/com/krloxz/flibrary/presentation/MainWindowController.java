@@ -40,9 +40,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 @Component
-public class FileExplorerController {
-
-  private final HostServices hostServices;
+public class MainWindowController {
 
   @FXML
   public Label label;
@@ -61,15 +59,12 @@ public class FileExplorerController {
 
   private final DSLContext create;
 
-  public FileExplorerController(final HostServices hostServices, final DSLContext create) {
-    this.hostServices = hostServices;
+  public MainWindowController(final DSLContext create) {
     this.create = create;
   }
 
   @FXML
   public void initialize() {
-    this.button.setOnAction(actionEvent -> this.label.setText(this.hostServices.getDocumentBase()));
-
     final TreeItem<FileItem> root = new TreeItem<>(new FileItem("/", 0));
     this.table.setRoot(root);
     this.table.setShowRoot(false);
