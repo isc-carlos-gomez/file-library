@@ -1,4 +1,4 @@
-package com.krloxz.forganizer;
+package com.krloxz.flibrary.presentation;
 
 import java.io.IOException;
 import java.net.URL;
@@ -15,25 +15,25 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 @Component
-public class PrimaryStageInitializer implements ApplicationListener<JavafxApplication.StageReadyEvent> {
+public class PrimaryStageInitializer implements ApplicationListener<JavafxApplication.PrimaryStageReady> {
 
   private final String applicationTitle;
   private final Resource fxml;
   private final ApplicationContext applicationContext;
 
-  public PrimaryStageInitializer(@Value("${spring.application.ui.title}") final String applicationTitle,
-      @Value("classpath:/ui/file-explorer.fxml") final Resource fxml, final ApplicationContext applicationContext) {
+  public PrimaryStageInitializer(
+      @Value("${spring.application.ui.title}") final String applicationTitle,
+      @Value("classpath:/ui/file-explorer.fxml") final Resource fxml,
+      final ApplicationContext applicationContext) {
     this.applicationTitle = applicationTitle;
     this.fxml = fxml;
     this.applicationContext = applicationContext;
   }
 
   @Override
-  public void onApplicationEvent(final JavafxApplication.StageReadyEvent stageReadyEvent) {
+  public void onApplicationEvent(final JavafxApplication.PrimaryStageReady stageReadyEvent) {
     try {
       final Stage stage = stageReadyEvent.getStage();
-
-      
 
       final URL url = this.fxml.getURL();
       final FXMLLoader fxmlLoader = new FXMLLoader(url);

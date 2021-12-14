@@ -1,15 +1,23 @@
-package com.krloxz.forganizer;
+package com.krloxz.flibrary.presentation;
+
+import static com.krloxz.forganaizer.infra.jooq.library.Tables.FILE_PATHS;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Date;
 
 import org.controlsfx.dialog.ProgressDialog;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.krloxz.flibrary.application.DirectoryAdder;
+import com.krloxz.flibrary.application.FileScanner;
+
 import javafx.application.HostServices;
+import javafx.application.Platform;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -28,7 +36,8 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
-import reactor.core.Disposable;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 @Component
 public class FileExplorerController {
@@ -52,13 +61,10 @@ public class FileExplorerController {
 
   private final DSLContext create;
 
-  public FileExplorerController(final HostServices hostServices, final FileScanner2 scanner, final DSLContext create) {
+  public FileExplorerController(final HostServices hostServices, final DSLContext create) {
     this.hostServices = hostServices;
-    this.scanner = scanner;
     this.create = create;
   }
-
-  private final FileScanner2 scanner;
 
   @FXML
   public void initialize() {
@@ -70,6 +76,16 @@ public class FileExplorerController {
 
     this.pathColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("path"));
     this.sizeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("size"));
+
+    Flux.fromStream(
+        this.create.select(DSL.asterisk())
+            .from(FILE_PATHS)
+            .limit(1000)
+            .fetchStreamInto(FILE_PATHS))
+        .subscribeOn(Schedulers.boundedElastic())
+        .subscribe(path -> {
+          Platform.runLater(() -> root.getChildren().add(new TreeItem<>(new FileItem(path.getPath(), 1000))));
+        });
 
     // try {
     // final Instant start = Instant.now();
@@ -114,44 +130,44 @@ public class FileExplorerController {
     final Path selectedDirectory = chooser.showDialog(window).toPath();
 
     final Service<Void> service = new Service<Void>() {
-      private Disposable disposable;
-      private Subscription subscription;
 
       @Override
       protected Task<Void> createTask() {
         return new Task<Void>() {
 
+          private Subscription subscription;
+
           @Override
           protected Void call() throws Exception {
+            System.out.println("Start: " + new Date());
             updateMessage("Starting...");
             updateMessage("Adding '" + selectedDirectory + "' to the library...");
             directoryAdder.add(selectedDirectory);
             updateMessage("Files added successfully");
             Thread.sleep(500);
             updateMessage("Scanning file attributes...");
-            // disposable =
             fileScanner.scan()
-                .doOnNext(progress -> updateProgress(progress, 30))
                 .doOnSubscribe(s -> subscription = s)
+                .doOnNext(progress -> updateMessage(progress.workDone() + " / " + progress.totalWork()))
+                .doOnNext(progress -> updateProgress(progress.workDone(), progress.totalWork()))
                 .blockLast();
-            // .subscribe(progress -> updateProgress(progress, 1_000));
-            // Thread.sleep(30_000);
             updateMessage("Scan is complete");
+            System.out.println("End: " + new Date());
             return null;
           }
+
+          @Override
+          protected void cancelled() {
+            System.err.println("CANCEL clicked");
+            this.subscription.cancel();
+          }
+
         };
       }
 
       @Override
       protected void succeeded() {
         System.err.println("SUCCEEDED");
-      }
-
-      @Override
-      protected void cancelled() {
-        System.err.println("CANCEL clicked");
-        // this.disposable.dispose();
-        this.subscription.cancel();
       }
 
       @Override
@@ -176,12 +192,11 @@ public class FileExplorerController {
     // .from(FILES)
     // .fetchStreamInto(FILES)
     // .forEach(record -> {
-    // this.table.getRoot().getChildren().add(new TreeItem<>(new FileItem(record.getPath(), 0)));
+    // this.table.getRoot().getChildren().add(new TreeItem<>(new
+    // FileItem(record.getPath(), 0)));
     // });
   }
 
-  // record Test(String path) {
-  // }
   public class FileItem {
 
     private StringProperty path;

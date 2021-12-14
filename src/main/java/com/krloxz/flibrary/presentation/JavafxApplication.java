@@ -1,10 +1,13 @@
-package com.krloxz.forganizer;
+package com.krloxz.flibrary.presentation;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+
+import com.krloxz.flibrary.FLibraryApplication;
+
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
@@ -24,7 +27,7 @@ public class JavafxApplication extends Application {
         };
 
     this.context = new SpringApplicationBuilder()
-        .sources(FileOrganizerApplication.class)
+        .sources(FLibraryApplication.class)
         .initializers(initializer)
         .build()
         .run(getParameters().getRaw().toArray(new String[0]));
@@ -32,7 +35,7 @@ public class JavafxApplication extends Application {
 
   @Override
   public void start(final Stage stage) throws Exception {
-    this.context.publishEvent(new StageReadyEvent(stage));
+    this.context.publishEvent(new PrimaryStageReady(stage));
   }
 
   @Override
@@ -41,13 +44,13 @@ public class JavafxApplication extends Application {
     Platform.exit();
   }
 
-  class StageReadyEvent extends ApplicationEvent {
+  class PrimaryStageReady extends ApplicationEvent {
 
     public Stage getStage() {
       return Stage.class.cast(getSource());
     }
 
-    public StageReadyEvent(final Object source) {
+    public PrimaryStageReady(final Object source) {
       super(source);
     }
   }

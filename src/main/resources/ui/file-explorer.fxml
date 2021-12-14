@@ -11,12 +11,12 @@
 
 <VBox prefHeight="382.0" prefWidth="501.0" spacing="5.0"
   xmlns="http://javafx.com/javafx/17"
-  xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.krloxz.forganizer.FileExplorerController">
+  xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.krloxz.flibrary.presentation.FileExplorerController">
   <MenuBar>
     <menus>
       <Menu mnemonicParsing="false" text="File">
         <items>
-          <MenuItem mnemonicParsing="false" onAction="#addDirectory" text="Add directory" />
+          <MenuItem mnemonicParsing="false" text="Add directory" onAction="#addDirectory" />
           <MenuItem mnemonicParsing="false" text="Scan files" />
           <MenuItem mnemonicParsing="false" text="Find duplicates" />
           <MenuItem mnemonicParsing="false" text="Close" />
