@@ -9,17 +9,15 @@
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane
-  xmlns="http://javafx.com/javafx/17"
-  xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="com.krloxz.flibrary.presentation.MainWindowController">
+<BorderPane xmlns="http://javafx.com/javafx/17"
+  xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.krloxz.flibrary.presentation.MainWindowController">
   <top>
     <MenuBar>
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
             <MenuItem mnemonicParsing="false" text="Add directory" onAction="#addDirectory" />
-            <MenuItem mnemonicParsing="false" text="Scan files" />
+            <MenuItem mnemonicParsing="false" text="Scan files" onAction="#scanFiles" />
             <MenuItem mnemonicParsing="false" text="Find duplicates" />
             <MenuItem mnemonicParsing="false" text="Close" />
           </items>
@@ -40,8 +38,8 @@
   <center>
     <TreeTableView fx:id="table">
       <columns>
-        <TreeTableColumn fx:id="pathColumn" editable="false" minWidth="300.0" prefWidth="200.0" text="Path" />
-        <TreeTableColumn fx:id="sizeColumn" minWidth="200.0" prefWidth="200.0" text="Size" />
+        <TreeTableColumn fx:id="pathColumn" text="Path" minWidth="800" prefWidth="800" />
+        <TreeTableColumn fx:id="sizeColumn" text="Size" minWidth="100" prefWidth="100" />
       </columns>
     </TreeTableView>
   </center>
